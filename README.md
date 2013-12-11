@@ -1,5 +1,8 @@
 Shortestpaths
 =============
+
+John Cyr - jrc11v 
+
 COP 4531: Complexity and Analysis of Data Structures and Algorithms
 
 Programming Assgnment 3, Due Date - 12/10/2013 11:59 PM 
