@@ -1,21 +1,28 @@
-##import Queue
-import itertools
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## COP 4531: Complexity and Analysis of Data Structures and Algorithms
+## Programming Assignment 3, Due Date - 12/10/2013 11:59 PM
+## Assigned - 10/10/2013
+##
+## John Cyr - jrc11v
+##
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 from heapq import heapify, heappush, heappop
 
 class PriorityQueue():
     def __init__(self):
         self.pq = []
         self.status = {}
-        self.REMOVED = '<removed-task>'
 
-    def add_task(self, task, priority=0):
-        entry = [priority, task]
-        self.status[task] = entry
+    def add(self, value, priority=0):
+        entry = [priority, value]
+        self.status[value] = entry
         heappush(self.pq, entry)
 
-    def pop_task(self):
-        priority, task = heappop(self.pq)
-        return (task, priority)
+    def pop(self):
+        priority, value = heappop(self.pq)
+        return (value, priority)
 
     def empty(self):
         return len(self.pq) == 0
@@ -27,6 +34,8 @@ class PriorityQueue():
     def get_p(self, value):
         if value in self.status:
             return self.status[value][0]
+        
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 def main():
     fileName = raw_input('Enter Filename: ')
@@ -34,7 +43,7 @@ def main():
 
     setMode = True
     
-    G = []
+    data = []
 
     directed = ''
     
@@ -42,30 +51,34 @@ def main():
         if line[0] != '#':
             if setMode:
                 if line[0] == 'D':
-                    print 'Directed'
+                    print 'Directed', '\n'
                     directed = True
                 elif line[0] == 'UD':
-                    print 'Undirected'
+                    print 'Undirected', '\n'
                     directed = False
                 setMode = False
             else:
                 if directed:
                     temp = line.split()
-                    G.append((temp[0], temp[1], int(temp[2])))
+                    data.append((temp[0], temp[1], int(temp[2])))
                 else:
                     temp = line.split()
-                    G.append((temp[0], temp[1], int(temp[2])))
-                    G.append((temp[1], temp[0], int(temp[2])))
-    
-    Dijkstra(G, directed)
+                    data.append((temp[0], temp[1], int(temp[2])))
+                    data.append((temp[1], temp[0], int(temp[2])))
 
-def Dijkstra(G, directed):
+    Dijkstra(data)
+    ShortestPath(data)
+    
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+def Dijkstra(data):
+    print 'Dijkstra'
 
     inf = float('inf')
     
     vSet = set()
 
-    for i in G:
+    for i in data:
         vSet.add(i[0])
         vSet.add(i[1])
     
@@ -74,40 +87,80 @@ def Dijkstra(G, directed):
     
     while loop:
         if source not in vSet:
-            source = raw_input('SOURCE: ')[0]
+            source = raw_input('Source : ')[0]
         else:
             loop = False
 
-    s = 'A'
     adjDict = {vertex: set() for vertex in vSet} # dic w/ char key and sets of tuples
 
-    for start, end, cost in G:
+    for start, end, cost in data:
         adjDict[start].add((end, cost))
 
-    Q = PriorityQueue()
+    data = PriorityQueue()
 
     for i in vSet:
-        if i == s:
-            Q.add_task(i, 0)
+        if i == source:
+            data.add(i, 0)
         else:
-            Q.add_task(i, inf)
+            data.add(i, inf)
 
-    uq = Q.pop_task() # Pop min Starting node
+    uq = data.pop() # Pop min Starting node
         
     while(True):
         if uq[1] == inf: break
         u_v, u_p = uq # u_v => Value    u_p => Priority
 
         for adjV in adjDict[u_v]: # for each adj vertex in E in set index u_v
-            if u_p + adjV[1] < Q.get_p(adjV[0]):
+            if u_p + adjV[1] < data.get_p(adjV[0]):
                 newP = u_p + adjV[1]
-                Q.add_task(adjV[0], newP)
+                data.add(adjV[0], newP)
 
-        uq = Q.pop_task() 
+        uq = data.pop() 
 
-    for i in Q.status:
-        print 'NODE', i, ':', Q.status[i][0]
-    print 'End Dijkstra'
+    for i in data.status:
+        print 'NODE', i, ':', data.status[i][0]
+    print 'End Dijkstra', '\n'
+    
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -     
+
+def ShortestPath(data):
+    print 'Shortest Reliable Paths Algorithm'
+    
+    inf = float('inf')
+    
+    vSet = set()
+
+    for i in data:
+        vSet.add(i[0])
+        vSet.add(i[1])
+    
+    loop_s = True
+    loop_d = True
+    
+    source = ''
+    k = ''
+    tree = []
+    
+    k = int(raw_input('Integer k : ')[0])
+    
+    while loop_s:
+        if source not in vSet:
+            source = raw_input('Source : ')[0]
+        else:
+            loop_s = False
+
+    
+    
+    adjDict = {vertex: set() for vertex in vSet} # dic w/ char key and sets of tuples
+
+    for start, end, cost in data:
+        adjDict[start].add((end, cost))
+
+    # Didn't get this part  
+    print 'NODE ', source, ': 0'
+    print 'End Shortest Reliable Paths Algorithm'
+    
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 if __name__ == '__main__':
     main()
